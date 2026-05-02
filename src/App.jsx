@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from “react”;
 
-// ═══════════════════════════════════════════════════════════════════
-// SWAP — COMPLETE v5
-// Legal onboarding · Group + Individual closets · OOTD · Return prefs
-// TN law + COPPA 2025 compliant · Large photo format · Face toggle
-// Group access enforcement · SMS/text invite · In-closet IM chat
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
+// SWAP - COMPLETE v5
+// Legal onboarding - Group + Individual closets - OOTD - Return prefs
+// TN law + COPPA 2025 compliant - Large photo format - Face toggle
+// Group access enforcement - SMS/text invite - In-closet IM chat
+// ===================================================================
 
 const C = {
 bg:”#FDF6EE”, ink:”#1A1A2E”, yellow:”#FFD93D”, coral:”#FF6B6B”,
@@ -20,7 +20,7 @@ const NOW  = Date.now();
 const DAY  = 86400000;
 const HOUR = 3600000;
 
-// ─── LEGAL DOCUMENTS ─────────────────────────────────────────────
+// === LEGAL DOCUMENTS =============================================
 const SAFETY_GUIDELINES = `SWAP COMMUNITY SAFETY GUIDELINES
 
 Your safety is our top priority. These rules keep every user comfortable and protected.
@@ -186,7 +186,7 @@ Compliant with the Tennessee Uniform Arbitration Act (T.C.A. §§ 29-5-301 et se
 1. CONTACT
    Legal: legal@swapapp.com | Privacy/COPPA: privacy@swapapp.com`;
 
-// ─── FEED SCORE ───────────────────────────────────────────────────
+// === FEED SCORE ===================================================
 const feedScore = (item, userTags=[], userSize=“M”) => {
 const freshness  = ((14 - Math.min(14,(NOW-item.addedAt)/DAY))/14)*40;
 const social     = Math.min(30, item.likes*1.2 + item.reserves*4 + item.views*0.3);
@@ -197,7 +197,7 @@ return Math.round(freshness+social+behavioral+urgency);
 };
 const heatLabel = (s) => s>=75?{label:“🔥 Trending”,color:C.coral}:s>=50?{label:“✨ Fresh”,color:C.sky}:s>=25?{label:“👀 Active”,color:C.amber}:{label:“💤 Fading”,color:C.muted};
 
-// ─── USERS & DATA ─────────────────────────────────────────────────
+// === USERS & DATA =================================================
 const ALL_USERS = [
 {id:“u1”,name:“Emma”, emoji:“✨”,tags:[“clean girl”,“Y2K”],  size:“M”, followers:34,streak:7 },
 {id:“u2”,name:“Zoe”,  emoji:“🌸”,tags:[“cottagecore”,“boho”],size:“S”, followers:51,streak:3 },
@@ -243,7 +243,7 @@ const PUSH_NOTIFS = [
 {id:3,cat:“social”,       emoji:“❤️”,text:“Your closet got 8 visits today”,   sub:“Items getting attention 👀”,time:“3:45PM”,unread:true},
 ];
 
-// ─── GROUP ACCESS ENFORCEMENT ─────────────────────────────────────
+// === GROUP ACCESS ENFORCEMENT =====================================
 // Only members of a group can see that group’s items.
 // itemIsVisibleToUser: returns true only if user is a member of at
 // least one group that has shared this item.
@@ -255,10 +255,10 @@ userGroups.some(g => g.members.includes(ME.id) && g.sharedItems.includes(item.id
 const getAccessibleItems = (allItems, userGroups) =>
 allItems.filter(i => i.ownerId === ME.id || itemIsVisibleToUser(i, userGroups));
 
-// ─── INVITE / SMS SYSTEM ──────────────────────────────────────────
+// === INVITE / SMS SYSTEM ==========================================
 // Simulates the invite flow. In production:
-//   iOS  → window.location = “sms:+15551234567&body=…”
-//   Android → window.location = “sms:+15551234567?body=…”
+// iOS  -> window.location = “sms:+15551234567&body=…”
+// Android -> window.location = “sms:+15551234567?body=…”
 // Both deeplink back to the app with ?invite=CODE in the URL.
 
 const buildSmsLink = (code, groupName, phone = “”) => {
@@ -267,7 +267,7 @@ const msg = encodeURIComponent(
 `Download Swap and use my invite code: ${code}  ` +
 `(Already on Swap? Just open the app and enter the code to get instant access to our group closet!)`
 );
-// iOS uses & Android uses ? — we try both via the safer format
+// iOS uses & Android uses ? - we try both via the safer format
 const num = phone.replace(/\D/g,””);
 return num ? `sms:${num}&body=${msg}` : `sms:&body=${msg}`;
 };
@@ -277,7 +277,7 @@ const INIT_PENDING_INVITES = [
 {id:“inv1”, groupId:“g1”, code:“VC-2847”, name:“Sofia”, phone:”+16155550192”, sentAt:NOW-30*60000, status:“pending”},
 ];
 
-// ─── IM / CHAT DATA ───────────────────────────────────────────────
+// === IM / CHAT DATA ===============================================
 // Keyed by userId for DMs, keyed by groupId for group chats
 const INIT_DM_THREADS = {
 u2: [
@@ -311,7 +311,7 @@ g3: [
 ],
 };
 
-// ─── UI ATOMS ─────────────────────────────────────────────────────
+// === UI ATOMS =====================================================
 const Btn = ({children,onClick,variant=“primary”,full,disabled,small,xs,style={}}) => {
 const vs={primary:{background:C.ink,color:C.yellow,border:`2px solid ${C.ink}`},secondary:{background:“transparent”,color:C.ink,border:`2px solid ${C.ink}`},success:{background:C.sage,color:“white”,border:`2px solid ${C.sage}`},coral:{background:C.coral,color:“white”,border:`2px solid ${C.coral}`},ghost:{background:“transparent”,color:C.muted,border:`2px solid ${C.border}`},teal:{background:C.teal,color:“white”,border:`2px solid ${C.teal}`},yellow:{background:C.yellow,color:C.ink,border:`2px solid ${C.yellow}`},purple:{background:C.purple,color:“white”,border:`2px solid ${C.purple}`}};
 return <button onClick={onClick} disabled={disabled} style={{…vs[variant],borderRadius:12,fontFamily:M,fontWeight:800,cursor:disabled?“not-allowed”:“pointer”,letterSpacing:.3,transition:“all .15s”,padding:xs?“5px 10px”:small?“8px 13px”:“12px 18px”,fontSize:xs?10:small?11:13,opacity:disabled?.5:1,width:full?“100%”:“auto”,…style}}>{children}</button>;
@@ -348,7 +348,7 @@ function MemberAvatars({memberIds,max=4,size=28}) {
   </div>;
 }
 
-// ─── PUSH TOAST ───────────────────────────────────────────────────
+// === PUSH TOAST ===================================================
 function PushToast({notif,onDismiss}) {
 useEffect(()=>{const t=setTimeout(onDismiss,5000);return()=>clearTimeout(t);},[]);
 const bc={transactional:C.coral,social:C.lavender,urgency:C.amber}[notif.cat]||C.border;
@@ -363,7 +363,7 @@ return <div style={{position:“fixed”,top:14,left:“50%”,transform:“tran
   </div>;
 }
 
-// ─── POST FEEDBACK TOAST ──────────────────────────────────────────
+// === POST FEEDBACK TOAST ==========================================
 function PostFeedback({onDismiss}) {
 const [phase,setPhase]=useState(0);
 const phases=[{emoji:“🚀”,text:“Posted!”,sub:“Notifying your Group…”,color:C.sage},{emoji:“📣”,text:“3 members notified”,sub:“Your OOTD is live in the feed”,color:C.sky},{emoji:“🔥”,text:“You’re boosted this hour!”,sub:“Fresh posts get 3× more views”,color:C.coral}];
@@ -377,9 +377,9 @@ return <div style={{position:“fixed”,bottom:100,left:“50%”,transform:“
   </div>;
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
 // LEGAL ONBOARDING FLOW
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
 function LegalFlow({onComplete}) {
 const [step,setStep]=useState(0);
 const [ageGroup,setAgeGroup]=useState(null);
@@ -559,9 +559,9 @@ if(step===7) return(
 return null;
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
 // ITEM CARD & MODAL
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
 function ItemCard({item,onSelect,compact=false}) {
 const [liked,setLiked]=useState(false);
 const heat=heatLabel(feedScore(item,ME.tags,ME.size));
@@ -643,9 +643,9 @@ return(
 );
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// OOTD / STYLE FEED — full capability with face toggle
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
+// OOTD / STYLE FEED - full capability with face toggle
+// ===================================================================
 function StyleFeed({userAge=“13to17”}) {
 const [posts,setPosts]=useState(INIT_OOTDS);
 const [liked,setLiked]=useState([]);
@@ -730,9 +730,9 @@ return(
 );
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// MY CLOSET — with IM chat tab
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
+// MY CLOSET - with IM chat tab
+// ===================================================================
 function MyCloset({onItemSelect,onBack,groups}) {
 const [items,setItems]=useState(INIT_ITEMS.filter(i=>i.ownerId===“u1”));
 const [addOpen,setAddOpen]=useState(false);
@@ -917,9 +917,9 @@ return(
 );
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// HOME FEED — access-enforced: only shows items from user’s groups
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
+// HOME FEED - access-enforced: only shows items from user’s groups
+// ===================================================================
 function HomeFeed({groups,onGroupSelect,onItemSelect,onOpenMyCloset,onJoinByCode}) {
 const [view,setView]=useState(“groups”);
 const [joinInput,setJoinInput]=useState(””);
@@ -1021,9 +1021,9 @@ return(
 );
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// GROUP DETAIL — access-enforced, with group chat & invite system
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
+// GROUP DETAIL - access-enforced, with group chat & invite system
+// ===================================================================
 function GroupDetail({group,onBack,onItemSelect,allGroups}) {
 const [view,setView]=useState(“closet”); // closet | chat | invite
 const [chatView,setChatView]=useState(“group”); // group | dm
@@ -1054,7 +1054,7 @@ const filtered=[…items].sort((a,b)=>feedScore(b,ME.tags,ME.size)-feedScore(a,M
 const groupMessages=groupChats[group.id]||[];
 const otherMembers=members.filter(u=>u.id!==ME.id);
 
-// ── Send message helpers ──────────────────────────────────────────
+// == Send message helpers ==========================================
 const sendGroupMsg=()=>{
 if(!msg.trim()) return;
 setGroupChats(prev=>({…prev,[group.id]:[…(prev[group.id]||[]),{id:Date.now(),from:“u1”,text:msg,time:“now”}]}));
@@ -1066,7 +1066,7 @@ setDmThreads(prev=>({…prev,[uid]:[…(prev[uid]||[]),{id:Date.now(),from:“u1
 setMsg(””); setTimeout(()=>chatEndRef.current?.scrollIntoView({behavior:“smooth”}),50);
 };
 
-// ── SMS invite ────────────────────────────────────────────────────
+// == SMS invite ====================================================
 const handleSmsInvite=()=>{
 const link=buildSmsLink(group.code,group.name,invitePhone);
 window.open(link,”_blank”);
@@ -1320,7 +1320,7 @@ return(
 );
 }
 
-// ─── CREATE GROUP (abbreviated) ───────────────────────────────────
+// === CREATE GROUP (abbreviated) ===================================
 function CreateGroup({onBack,onCreate}) {
 const [step,setStep]=useState(0);
 const [gName,setGName]=useState(””); const [gEmoji,setGEmoji]=useState(“👗”); const [gColor,setGColor]=useState(C.yellow);
@@ -1387,7 +1387,7 @@ return(
 );
 }
 
-// ─── TRACKER ─────────────────────────────────────────────────────
+// === TRACKER =====================================================
 function Tracker() {
 const [ious,setIous]=useState([
 {id:1,item:“Denim Jacket”,emoji:“🧥”,borrower:“You”,owner:“Zoe 🌸”,returnDays:5,status:“active”,returnPref:“clean”},
@@ -1414,9 +1414,9 @@ return(
 );
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// ROOT APP — wired with group access enforcement, SMS invite, IM chat
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
+// ROOT APP - wired with group access enforcement, SMS invite, IM chat
+// ===================================================================
 export default function App() {
 const [screen,setScreen]=useState(“legal”);
 const [tab,setTab]=useState(“home”);
@@ -1437,7 +1437,7 @@ return()=>timers.forEach(clearTimeout);
 const handleGroupSelect=(g)=>{ if(g===“create”) setActiveGroup(“create”); else if(g&&g.members?.includes(ME.id)) setActiveGroup(g); };
 const handleGroupCreate=(newGroup)=>{ setGroups(prev=>[…prev,newGroup]); setTimeout(()=>setActiveGroup(null),3500); };
 
-// Join by code — adds ME to the group’s member list if code matches
+// Join by code - adds ME to the group’s member list if code matches
 const handleJoinByCode=(code,foundGroup)=>{
 setGroups(prev=>prev.map(g=>g.id===foundGroup.id&&!g.members.includes(ME.id)?{…g,members:[…g.members,ME.id],activity:`${ME.name} joined · just now`}:g));
 setJoinSuccessMsg(`You joined ${foundGroup.name}! 🎉`);
